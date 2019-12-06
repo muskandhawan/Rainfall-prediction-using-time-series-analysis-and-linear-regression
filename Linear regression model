@@ -1,0 +1,142 @@
+import pandas as pd
+import numpy as np
+import math
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error,r2_score,mean_absolute_error
+import matplotlib.pyplot as plt
+import seaborn as sb
+from sklearn import preprocessing
+
+data=pd.read_csv("C:\\Documents\\DataMining\\rainfall.csv")
+print("Data heads:")
+print(data.head())
+print("Null values in the dataset before preprocessing:")
+print(data.isnull().sum())
+print("Filling null values with mean of that particular column")
+data=data.fillna(np.mean(data))
+print("Mean of data:")
+print(np.mean(data))
+print("Null values in the dataset after preprocessing:")
+print(data.isnull().sum())
+print("\n\nShape: ",data.shape)
+
+print("Co-Variance =",data.cov())
+print("Co-Relation =",data.corr())
+
+corr_cols=data.corr()['ANNUAL'].sort_values()[::-1]
+print("Index of correlation columns:",corr_cols.index)
+
+print("Scatter plot of annual and january attributes")
+plt.scatter(data.ANNUAL,data.JAN)
+
+print("Histograms showing the data from attributes (JANUARY to DECEMBER) of the years 1901-2015:")
+data['JAN'].hist(bins=20)
+data['FEB'].hist(bins=20)
+data['MAR'].hist(bins=20)
+data['APR'].hist(bins=20)
+data['MAY'].hist(bins=20)
+data['JUN'].hist(bins=20)
+data['JUL'].hist(bins=20)
+data['AUG'].hist(bins=20)
+data['SEP'].hist(bins=20)
+data['OCT'].hist(bins=20)
+data['NOV'].hist(bins=20)
+data['DEC'].hist(bins=20)
+
+print("Violin plot of the ANNUAL attribute :-")
+sb.violinplot(data=data['ANNUAL'])
+
+d2=data.drop(['SUBDIVISION','YEAR','ANNUAL','Jan-Feb','Mar-May','Jun-Sep','Oct-Dec'],axis=1)
+k=((d2.head().sum()))
+month=list(d2.head())
+print("Months are: ",month)
+print(k)
+s=0
+for i in d2.sum():
+s=s+i
+print("Total recorded rainfall in these 12 months",s)
+probability=list(k/s)
+print(probability)
+max_rainfall=max(probability)
+for i in range(len(month)):
+if probability[i]==max_rainfall:
+print("Maximum Rainfall will be in the month of",month[i])
+min_rainfall=min(probability)
+for i in range(len(month)):
+if probability[i]==min_rainfall:
+print("Minimum Rainfall will be in the month of",month[i])
+
+from sklearn import linear_model
+print("___Multiple Linear regression model between annual rainfall and the periodic rainfall___")
+y=data['ANNUAL']
+x=data[['Jan-Feb','Mar-May','Jun-Sep','Oct-Dec']]
+train_x,test_x,train_y,test_y=train_test_split(x,y,test_size=0.3,shuffle=False)
+'''train_x=train_x[:,np.newaxis]
+test_x=test_x[:,np.newaxis]'''
+print("Train x shape",train_x.shape,"; Test_x",test_x.shape)
+print("Train y shape",train_y.shape,"; Test_y",test_y.shape)
+lm=linear_model.LinearRegression()
+lm.fit(train_x,train_y)
+pred=lm.predict(test_x)
+#print(test_y)
+#print(pred)
+print("Mean Squared Error =",mean_squared_error(test_y,pred))
+print("Root Mean Squared Error =",np.sqrt(mean_squared_error(test_y,pred)))
+print("Mean Absolute Error =",mean_absolute_error(test_y,pred))
+print("r2_score =",r2_score(test_y,pred))
+plt.scatter(pred,test_y)
+plt.xlabel('TRAIN_X')
+plt.ylabel('TRAIN_Y')
+plt.show()
+
+expected=[]
+for i in test_y:
+if i>2000:
+expected.append("high")
+else:
+expected.append("low")
+predicted=[]
+for i in pred:
+if i>2000:
+      predicted.append("high")
+else:
+      predicted.append("low")
+from sklearn.metrics import accuracy_score,confusion_matrix,classification_report
+acc=accuracy_score(predicted,expected)
+matrix=confusion_matrix(predicted,expected)
+clas=classification_report(predicted,expected)
+print("accuracy")
+print(acc)
+print("\n")
+print("classification")
+print(clas)
+
+exp=[]
+pre=[]
+for i in expected:
+  if i=='high':
+      exp.append(1)
+  else:
+      exp.append(0)
+for i in predicted:
+  if i=='high':
+    pre.append(1)
+  else:
+    pre.append(0)
+    
+from sklearn.metrics import roc_curve,auc
+import random
+fpr,tpr,threshold=roc_curve(exp,pre)
+roc_auc=auc(fpr,tpr)
+plt.title("receiver curve operating characteristic")
+plt.plot(fpr,tpr,'b',label='AUC = %0.2f'%roc_auc)
+plt.legend(loc='lower right')
+plt.plot([0,1],[0,1],'r--')
+plt.xlim([-0.1,1.2])
+plt.ylim([-0.1,1.2])
+plt.ylabel("True Positive Rate")
+plt.xlabel("False Positive Rate")
+plt.show()
+
+

@@ -1,0 +1,2 @@
+# Rainfall-prediction-using-time-series-analysis-and-linear-regression
+Rainfall is the major source of irrigation in India. Timely rainfall is very neccessory for farmers to manage their crops, so they harvest on time. This paper provides with the techniques to develop a rainfall prediction model. This model will use techniques to achieve reliable forecasting. Time forecasting model will consider the time period(dates, months, years) to find out future occurances of rainfall.It will detect pattern by analysing past data and help to predict future data. 

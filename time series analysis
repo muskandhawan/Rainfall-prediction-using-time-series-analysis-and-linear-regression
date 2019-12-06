@@ -1,0 +1,17 @@
+> rain_india<-read.csv(file.choose())
+> rain_india_ts <- ts(rain_india, start=c(1901), frequency = 1)
+> plot.ts(rain_india_ts)
+> rain_india_ts_hw <- HoltWinters(rain_india_ts, beta=F, gamma=F)
+> rain_india_ts_hw
+>rain_india_ts_hw$fitted
+> library(forecast)
+> forecast:::forecast.HoltWinters(rain_india_ts_hw, h=3)
+>
+rain_india_ts_hw_fcst<-forecast:::forecast.HoltWinters(rain_india_ts_hw, h=3)
+> forecast:::plot.forecast(rain_india_ts_hw_fcst)
+
+
+
+
+
+
